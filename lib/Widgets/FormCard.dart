@@ -1,12 +1,34 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class FormCard extends StatelessWidget {
+class FormCard extends StatefulWidget {
+  final bool isLogin;
+  FormCard({this.isLogin = false});
+
+  @override
+  _FormCardState createState() => _FormCardState();
+}
+
+class _FormCardState extends State<FormCard> {
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
+  addUserData(String id,String data) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(id, data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Container(
       width: double.infinity,
-      height: ScreenUtil.getInstance().setHeight(500),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
@@ -25,7 +47,7 @@ class FormCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("Login",
+            Text(widget.isLogin?"Login":"SignUp",
                 style: TextStyle(
                     fontSize: ScreenUtil.getInstance().setSp(45),
                     fontFamily: "Poppins-Bold",
@@ -33,13 +55,63 @@ class FormCard extends StatelessWidget {
             SizedBox(
               height: ScreenUtil.getInstance().setHeight(30),
             ),
-            Text("Username",
+            !widget.isLogin?Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text("Name",
+                    style: TextStyle(
+                        fontFamily: "Poppins-Medium",
+                        fontSize: ScreenUtil.getInstance().setSp(26))),
+                TextField(
+                  keyboardType: TextInputType.text,
+                  autofocus: true,
+                  textInputAction: TextInputAction.next,
+                  onSubmitted: (v) {
+                    addUserData('name', v.trim());
+                    FocusScope.of(context).nextFocus();
+                  },
+                  decoration: InputDecoration(
+                      hintText: "Name",
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
+                ),
+                SizedBox(
+                  height: ScreenUtil.getInstance().setHeight(30),
+                ),
+                Text("PhoneNumber",
+                    style: TextStyle(
+                        fontFamily: "Poppins-Medium",
+                        fontSize: ScreenUtil.getInstance().setSp(26))),
+                TextField(
+                  autofocus: true,
+                  textInputAction: TextInputAction.next,
+                  onSubmitted: (v) {
+                    addUserData('phone', v.trim());
+                    FocusScope.of(context).nextFocus();
+                  },
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                      hintText: "PhoneNumber",
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
+                ),
+              ],
+            ):Container(),
+            SizedBox(
+              height: ScreenUtil.getInstance().setHeight(30),
+            ),
+            Text("Email",
                 style: TextStyle(
                     fontFamily: "Poppins-Medium",
                     fontSize: ScreenUtil.getInstance().setSp(26))),
             TextField(
+              keyboardType: TextInputType.emailAddress,
+              autofocus: true,
+              textInputAction: TextInputAction.next,
+              onSubmitted: (v) {
+                addUserData('email', v.trim());
+                FocusScope.of(context).nextFocus();
+              },
               decoration: InputDecoration(
-                  hintText: "username",
+                  hintText: "Email",
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
             ),
             SizedBox(
@@ -50,7 +122,12 @@ class FormCard extends StatelessWidget {
                     fontFamily: "Poppins-Medium",
                     fontSize: ScreenUtil.getInstance().setSp(26))),
             TextField(
+              autofocus: true,
+              textInputAction: TextInputAction.done,
               obscureText: true,
+              onSubmitted: (v){
+                addUserData('password', v);
+              },
               decoration: InputDecoration(
                   hintText: "Password",
                   hintStyle: TextStyle(color: Colors.grey, fontSize: 12.0)),
@@ -58,18 +135,6 @@ class FormCard extends StatelessWidget {
             SizedBox(
               height: ScreenUtil.getInstance().setHeight(35),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                      color: Colors.blue,
-                      fontFamily: "Poppins-Medium",
-                      fontSize: ScreenUtil.getInstance().setSp(28)),
-                )
-              ],
-            )
           ],
         ),
       ),

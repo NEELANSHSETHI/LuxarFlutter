@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Widgets/FormCard.dart';
 import 'Widgets/SocialIcons.dart';
 import 'CustomIcons.dart';
@@ -16,6 +17,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  bool isLogin = false;
 
   Widget radioButton(bool isSelected) => Container(
         width: 16.0,
@@ -93,9 +96,9 @@ class _MyAppState extends State<MyApp> {
                     ],
                   ),
                   SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(150),
+                    height: ScreenUtil.getInstance().setHeight(80),
                   ),
-                  FormCard(),
+                  FormCard(isLogin: isLogin,),
                   SizedBox(height: ScreenUtil.getInstance().setHeight(40)),
                   InkWell(
                     child: Container(
@@ -114,9 +117,15 @@ class _MyAppState extends State<MyApp> {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () async {
+                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            print(prefs.getString('name'));
+                            print(prefs.getString('email'));
+                            print(prefs.getString('phone'));
+                            print(prefs.getString('password'));
+                          },
                           child: Center(
-                            child: Text("SIGNIN",
+                            child: Text(!isLogin?"SIGNUP":"SIGNIN",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: "Poppins-Bold",
@@ -139,7 +148,7 @@ class _MyAppState extends State<MyApp> {
 //                    ],
 //                  ),
                   SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(150),
+                    height: ScreenUtil.getInstance().setHeight(60),
                   ),
 //                  Row(
 //                    mainAxisAlignment: MainAxisAlignment.center,
@@ -182,13 +191,17 @@ class _MyAppState extends State<MyApp> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                        "New User? ",
+                      Text(isLogin?
+                        "New User? ":"Already have an account?",
                         style: TextStyle(fontFamily: "Poppins-Medium"),
                       ),
                       InkWell(
-                        onTap: () {},
-                        child: Text("SignUp",
+                        onTap: () {
+                          setState(() {
+                            isLogin = !isLogin;
+                          });
+                        },
+                        child: Text(!isLogin?" Login":" SignUp",
                             style: TextStyle(
                                 color: Color(0xFF5d74e3),
                                 fontFamily: "Poppins-Bold")),
