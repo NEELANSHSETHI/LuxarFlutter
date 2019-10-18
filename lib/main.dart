@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Widgets/FormCard.dart';
 import 'Widgets/SocialIcons.dart';
@@ -15,13 +16,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _isSelected = false;
-
-  void _radio() {
-    setState(() {
-      _isSelected = !_isSelected;
-    });
-  }
 
   Widget radioButton(bool isSelected) => Container(
         width: 16.0,
@@ -65,7 +59,8 @@ class _MyAppState extends State<MyApp> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
-                child: Image.asset("assets/image_01.png"),
+                child: Opacity(
+                    opacity: .3,child: Image.asset("assets/undraw1.png",)),
               ),
               Expanded(
                 child: Container(),
@@ -78,137 +73,112 @@ class _MyAppState extends State<MyApp> {
               padding: EdgeInsets.only(left: 28.0, right: 28.0, top: 60.0),
               child: Column(
                 children: <Widget>[
-                  Row(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Image.asset(
                         "assets/logo.png",
                         width: ScreenUtil.getInstance().setWidth(110),
                         height: ScreenUtil.getInstance().setHeight(110),
                       ),
-                      Text("LOGO",
+                      Text("EZ SHOP",
                           style: TextStyle(
                               fontFamily: "Poppins-Bold",
-                              fontSize: ScreenUtil.getInstance().setSp(46),
+                              foreground: Paint()..shader =LinearGradient(
+                                colors: <Color>[Color(0xFF17ead9), Color(0xFF6078ea)],
+                              ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                              fontSize: ScreenUtil.getInstance().setSp(76),
                               letterSpacing: .6,
                               fontWeight: FontWeight.bold))
                     ],
                   ),
                   SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(180),
+                    height: ScreenUtil.getInstance().setHeight(150),
                   ),
                   FormCard(),
                   SizedBox(height: ScreenUtil.getInstance().setHeight(40)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          SizedBox(
-                            width: 12.0,
-                          ),
-                          GestureDetector(
-                            onTap: _radio,
-                            child: radioButton(_isSelected),
-                          ),
-                          SizedBox(
-                            width: 8.0,
-                          ),
-                          Text("Remember me",
-                              style: TextStyle(
-                                  fontSize: 12, fontFamily: "Poppins-Medium"))
-                        ],
-                      ),
-                      InkWell(
-                        child: Container(
-                          width: ScreenUtil.getInstance().setWidth(330),
-                          height: ScreenUtil.getInstance().setHeight(100),
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [
-                                Color(0xFF17ead9),
-                                Color(0xFF6078ea)
-                              ]),
-                              borderRadius: BorderRadius.circular(6.0),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Color(0xFF6078ea).withOpacity(.3),
-                                    offset: Offset(0.0, 8.0),
-                                    blurRadius: 8.0)
-                              ]),
-                          child: Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              onTap: () {},
-                              child: Center(
-                                child: Text("SIGNIN",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: "Poppins-Bold",
-                                        fontSize: 18,
-                                        letterSpacing: 1.0)),
-                              ),
-                            ),
+                  InkWell(
+                    child: Container(
+                      width: ScreenUtil.getInstance().setWidth(330),
+                      height: ScreenUtil.getInstance().setHeight(100),
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [Color(0xFF17ead9), Color(0xFF6078ea)]),
+                          borderRadius: BorderRadius.circular(6.0),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color(0xFF6078ea).withOpacity(.3),
+                                offset: Offset(0.0, 8.0),
+                                blurRadius: 8.0)
+                          ]),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {},
+                          child: Center(
+                            child: Text("SIGNIN",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Poppins-Bold",
+                                    fontSize: 18,
+                                    letterSpacing: 1.0)),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(40),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      horizontalLine(),
-                      Text("Social Login",
-                          style: TextStyle(
-                              fontSize: 16.0, fontFamily: "Poppins-Medium")),
-                      horizontalLine()
-                    ],
-                  ),
-                  SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(40),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SocialIcon(
-                        colors: [
-                          Color(0xFF102397),
-                          Color(0xFF187adf),
-                          Color(0xFF00eaf8),
-                        ],
-                        iconData: CustomIcons.facebook,
-                        onPressed: () {},
                       ),
-                      SocialIcon(
-                        colors: [
-                          Color(0xFFff4f38),
-                          Color(0xFFff355d),
-                        ],
-                        iconData: CustomIcons.googlePlus,
-                        onPressed: () {},
-                      ),
-                      SocialIcon(
-                        colors: [
-                          Color(0xFF17ead9),
-                          Color(0xFF6078ea),
-                        ],
-                        iconData: CustomIcons.twitter,
-                        onPressed: () {},
-                      ),
-                      SocialIcon(
-                        colors: [
-                          Color(0xFF00c6fb),
-                          Color(0xFF005bea),
-                        ],
-                        iconData: CustomIcons.linkedin,
-                        onPressed: () {},
-                      )
-                    ],
+                    ),
                   ),
+
+//                  Row(
+//                    mainAxisAlignment: MainAxisAlignment.center,
+//                    children: <Widget>[
+//                      horizontalLine(),
+//                      Text("Social Login",
+//                          style: TextStyle(
+//                              fontSize: 16.0, fontFamily: "Poppins-Medium")),
+//                      horizontalLine()
+//                    ],
+//                  ),
                   SizedBox(
-                    height: ScreenUtil.getInstance().setHeight(30),
+                    height: ScreenUtil.getInstance().setHeight(150),
                   ),
+//                  Row(
+//                    mainAxisAlignment: MainAxisAlignment.center,
+//                    children: <Widget>[
+//                      SocialIcon(
+//                        colors: [
+//                          Color(0xFF102397),
+//                          Color(0xFF187adf),
+//                          Color(0xFF00eaf8),
+//                        ],
+//                        iconData: CustomIcons.facebook,
+//                        onPressed: () {},
+//                      ),
+//                      SocialIcon(
+//                        colors: [
+//                          Color(0xFFff4f38),
+//                          Color(0xFFff355d),
+//                        ],
+//                        iconData: CustomIcons.googlePlus,
+//                        onPressed: () {},
+//                      ),
+//                      SocialIcon(
+//                        colors: [
+//                          Color(0xFF17ead9),
+//                          Color(0xFF6078ea),
+//                        ],
+//                        iconData: CustomIcons.twitter,
+//                        onPressed: () {},
+//                      ),
+//                      SocialIcon(
+//                        colors: [
+//                          Color(0xFF00c6fb),
+//                          Color(0xFF005bea),
+//                        ],
+//                        iconData: CustomIcons.linkedin,
+//                        onPressed: () {},
+//                      )
+//                    ],
+//                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
