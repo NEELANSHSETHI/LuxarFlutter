@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Widgets/FormCard.dart';
 import 'Widgets/SocialIcons.dart';
 import 'CustomIcons.dart';
+import 'click_pics.dart';
 
 void main() => runApp(MaterialApp(
       home: MyApp(),
@@ -123,6 +124,12 @@ class _MyAppState extends State<MyApp> {
                             print(prefs.getString('email'));
                             print(prefs.getString('phone'));
                             print(prefs.getString('password'));
+
+                            if(!isLogin)
+                                Navigator.push(context,MaterialPageRoute(
+                                  builder: (BuildContext context) => ClickPictures()
+                                ));
+                            
                           },
                           child: Center(
                             child: Text(!isLogin?"SIGNUP":"SIGNIN",
