@@ -11,6 +11,8 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
+import 'inputIPv4.dart';
+
 class ClickPictures extends StatefulWidget {
   @override
   _ClickPicturesState createState() => _ClickPicturesState();
@@ -27,6 +29,15 @@ class _ClickPicturesState extends State<ClickPictures> {
   File image3;
   String errMessage = 'Error Uploading Image';
   bool _isUploading = false;
+  SharedPreferences prefs;
+  String ipText;
+
+
+  @override
+  void initState() {
+      super.initState();
+      preferences();
+  }
 
   Widget _pictureBox(VoidCallback onPressed, int i) => Column(
         children: <Widget>[
@@ -40,7 +51,7 @@ class _ClickPicturesState extends State<ClickPictures> {
                   borderRadius: BorderRadius.circular(6.0),
                   boxShadow: [
                     BoxShadow(
-                        color: Color(0xFF6078ea).withOpacity(.3),
+                        color: Color(0xFF6078ea).withOpacity(.1),
                         offset: Offset(0.0, 8.0),
                         blurRadius: 8.0)
                   ]),
@@ -51,38 +62,17 @@ class _ClickPicturesState extends State<ClickPictures> {
               child: showImage(i),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 25,
-              width: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6.0),
-                gradient: LinearGradient(colors: [
-                  Color(0xFF17ead9),
-                  Colors.lightBlue.withOpacity(.2)
-                ]),
-              ),
-              child: Center(
-                child: Text("Click Picture",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: "Poppins-Bold",
-                        fontSize: 10,
-                        letterSpacing: 1.0)),
-              ),
-            ),
-          )
         ],
       );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
         body: Container(
       height: double.infinity,
       width: double.infinity,
-      color: Color(0xFF17ead9).withOpacity(.5),
+      color: Colors.white,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -104,51 +94,80 @@ class _ClickPicturesState extends State<ClickPictures> {
               ],
             ),
           ),
-          button()
+          button(),
+
         ],
       ),
     ));
   }
 
-  Widget button() {
+  Widget button () {
     if (_isUploading) {
       // File is being uploaded then show a progress indicator
       return Container(
           margin: EdgeInsets.only(top: 10.0),
           child: CircularProgressIndicator());
     } else
-      return InkWell(
-        child: Container(
-          width: ScreenUtil.getInstance().setWidth(330),
-          height: ScreenUtil.getInstance().setHeight(100),
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Color(0xFF17ead9), Color(0xFF6078ea)]),
-              borderRadius: BorderRadius.circular(6.0),
-              boxShadow: [
-                BoxShadow(
-                    color: Color(0xFF6078ea).withOpacity(.3),
-                    offset: Offset(0.0, 8.0),
-                    blurRadius: 8.0)
-              ]),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                _startUploading();
-              },
-              child: Center(
-                child: Text("Upload",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: "Poppins-Bold",
-                        fontSize: 18,
-                        letterSpacing: 1.0)),
+      return Column(
+        children: <Widget>[
+          InkWell(
+            child: Container(
+              width: ScreenUtil.getInstance().setWidth(330),
+              height: ScreenUtil.getInstance().setHeight(100),
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      colors: [Color(0xFF17ead9), Color(0xFF6078ea)]),
+                  borderRadius: BorderRadius.circular(6.0),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color(0xFF6078ea).withOpacity(.3),
+                        offset: Offset(0.0, 8.0),
+                        blurRadius: 8.0)
+                  ]),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+//                _startUploading();
+                    showDialog(
+                      context: context,
+                      builder: (_) => FunkyOverlay(),
+                    ).then((onValue){
+                      setState(() {
+                        ipText = prefs.getString('ip')?? "IP Not Found";
+
+                      });
+                    });
+                  },
+                  child: Center(
+                    child: Text("Upload",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Poppins-Bold",
+                            fontSize: 18,
+                            letterSpacing: 1.0)),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("Sending request to $ipText",style: TextStyle(
+                color: Colors.black,
+                fontSize: 15,
+                letterSpacing: 1.0),),
+          )
+        ],
       );
+  }
+
+  preferences() async {
+    prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    setState(() {
+      ipText = prefs.getString('ip')?? "IP Not Found";
+    });
   }
 
   chooseImage(int i) {
@@ -171,23 +190,25 @@ class _ClickPicturesState extends State<ClickPictures> {
               null != snapshot.data) {
             image1 = snapshot.data;
             base64Image = base64Encode(snapshot.data.readAsBytesSync());
-            return Stack(
-              children: <Widget>[
-                Image.file(
-                  snapshot.data,
-                  fit: BoxFit.fill,
-                ),
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.grey.withOpacity(.5),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 48,
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.file(
+                    snapshot.data,
+                    fit: BoxFit.fitWidth,
                   ),
-                )
-              ],
+                  Container(
+                    color: Colors.grey.withOpacity(.5),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  )
+                ],
+              ),
             );
           } else if (null != snapshot.error) {
             return const Text(
@@ -213,23 +234,25 @@ class _ClickPicturesState extends State<ClickPictures> {
               null != snapshot.data) {
             image2 = snapshot.data;
             base64Image = base64Encode(snapshot.data.readAsBytesSync());
-            return Stack(
-              children: <Widget>[
-                Image.file(
-                  snapshot.data,
-                  fit: BoxFit.fill,
-                ),
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.grey.withOpacity(.5),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 48,
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.file(
+                    snapshot.data,
+                    fit: BoxFit.fitWidth,
                   ),
-                )
-              ],
+                  Container(
+                    color: Colors.grey.withOpacity(.5),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  )
+                ],
+              ),
             );
           } else if (null != snapshot.error) {
             return const Text(
@@ -255,23 +278,25 @@ class _ClickPicturesState extends State<ClickPictures> {
               null != snapshot.data) {
             image3 = snapshot.data;
             base64Image = base64Encode(snapshot.data.readAsBytesSync());
-            return Stack(
-              children: <Widget>[
-                Image.file(
-                  snapshot.data,
-                  fit: BoxFit.fill,
-                ),
-                Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.grey.withOpacity(.5),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 48,
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.file(
+                    snapshot.data,
+                    fit: BoxFit.fitWidth,
                   ),
-                )
-              ],
+                  Container(
+                    color: Colors.grey.withOpacity(.5),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 48,
+                    ),
+                  )
+                ],
+              ),
             );
           } else if (null != snapshot.error) {
             return const Text(
@@ -297,9 +322,10 @@ class _ClickPicturesState extends State<ClickPictures> {
     setState(() {
       _isUploading = true;
     });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 //    String baseUrl = prefs.getString('baseUrl');
-    String baseUrl = "http://192.168.31.254/flutterdemoapi/api.php";
+    String baseUrl = "http://192.168.31.54:5000/flutterdemoapi/api.php";
     // Find the mime type of the selected file by looking at the header bytes of the file
     final mimeTypeData =
         lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
@@ -346,6 +372,33 @@ class _ClickPicturesState extends State<ClickPictures> {
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
     }
   }
+
+//  Future findBaseUrl() async {
+//
+//    NetworkInterface.list(includeLoopback: false, type: InternetAddressType.IPv4)
+//        .then((List<NetworkInterface> interfaces) {
+//      setState( () {
+//        _networkInterface = "";
+//        interfaces.forEach((interface) {
+//          _networkInterface += "### name: ${interface.name}\n";
+//          int i = 0;
+//          interface.addresses.forEach((address) {
+//            _networkInterface += "${i++}) ${address.address}\n";
+//          });
+//        });
+//      });
+//    });
+//
+//    print("IPIPIPIP $_networkInterface");
+//
+//    for (var interface in await NetworkInterface.list(type: InternetAddressType.IPv6,includeLinkLocal: false)) {
+//    print('== Interface: ${interface.name} ==');
+//    for (var addr in interface.addresses) {
+//    print(
+//    '${addr.address} ${addr.host} ${addr.isLoopback} ${addr.rawAddress} ${addr.type.name}');
+//    }
+//    }
+//  }
 
   void _resetState() {
     setState(() {
