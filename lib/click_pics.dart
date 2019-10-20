@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 import 'inputIPv4.dart';
+import 'api/api_services.dart';
 
 class ClickPictures extends StatefulWidget {
   @override
@@ -128,16 +129,21 @@ class _ClickPicturesState extends State<ClickPictures> {
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-//                _startUploading();
-                    showDialog(
-                      context: context,
-                      builder: (_) => FunkyOverlay(),
-                    ).then((onValue){
-                      setState(() {
-                        ipText = prefs.getString('ip')?? "IP Not Found";
 
+                    if(prefs.getString('ip')==null) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => FunkyOverlay(),
+                      ).then((onValue) {
+                        setState(() {
+                          ipText = prefs.getString('ip') ?? "IP Not Found";
+                        });
                       });
-                    });
+                    }
+                    else{
+                      _uploadImage();
+                    }
+
                   },
                   child: Center(
                     child: Text("Upload",
@@ -318,59 +324,38 @@ class _ClickPicturesState extends State<ClickPictures> {
       return Container();
   }
 
-  Future<Map<String, dynamic>> _uploadImage(File image) async {
+   _uploadImage() async {
     setState(() {
       _isUploading = true;
     });
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-//    String baseUrl = prefs.getString('baseUrl');
-    String baseUrl = "http://192.168.31.54:5000/flutterdemoapi/api.php";
     // Find the mime type of the selected file by looking at the header bytes of the file
     final mimeTypeData =
-        lookupMimeType(image.path, headerBytes: [0xFF, 0xD8]).split('/');
-    // Intilize the multipart request
-    final imageUploadRequest =
-        http.MultipartRequest('POST', Uri.parse(baseUrl));
-    // Attach the file in the request
-    print("imahepath ${image.path}");
-    final file = await http.MultipartFile.fromPath('image', image.path,
+        lookupMimeType(image1.path, headerBytes: [0xFF, 0xD8]).split('/');
+
+    print("imahepath ${image1.path}");
+    final file1 = await http.MultipartFile.fromPath('image1', image1.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+    final file2 = await http.MultipartFile.fromPath('image2', image2.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
+    final file3 = await http.MultipartFile.fromPath('image3', image3.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     // Explicitly pass the extension of the image with request body
     // Since image_picker has some bugs due which it mixes up
     // image extension with file name like this filenamejpge
     // Which creates some problem at the server side to manage
     // or verify the file extension
-    imageUploadRequest.fields['ext'] = mimeTypeData[1];
-    imageUploadRequest.files.add(file);
-    try {
-      final streamedResponse = await imageUploadRequest.send();
-      print(imageUploadRequest.fields[1]);
-      final response = await http.Response.fromStream(streamedResponse);
-      print(response.statusCode);
-      if (response.statusCode != 200) {
-        return null;
-      }
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      _resetState();
-      return responseData;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
+    uploadImagesApi(file1,file2,file3).then((onValue){
 
-  void _startUploading() async {
-    final Map<String, dynamic> response = await _uploadImage(image1);
-    print(response);
-    // Check if any error occured
-    if (response == null || response.containsKey("error")) {
-      Toast.show("Image Upload Failed!!!", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-    } else {
-      Toast.show("Image Uploaded Successfully!!!", context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-    }
+      if (onValue == null || onValue.success==false) {
+        Toast.show("Image Upload Failed!!!", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      } else {
+        Toast.show("Image Uploaded Successfully!!!", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      }
+    });
+
   }
 
 //  Future findBaseUrl() async {
