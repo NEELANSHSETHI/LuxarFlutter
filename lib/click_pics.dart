@@ -170,7 +170,6 @@ class _ClickPicturesState extends State<ClickPictures> {
 
   preferences() async {
     prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     setState(() {
       ipText = prefs.getString('ip')?? "IP Not Found";
     });
@@ -345,9 +344,10 @@ class _ClickPicturesState extends State<ClickPictures> {
     // image extension with file name like this filenamejpge
     // Which creates some problem at the server side to manage
     // or verify the file extension
-    uploadImagesApi(file1,file2,file3).then((onValue){
+    uploadImagesApi(file1,file2,file3,mimeTypeData).then((onValue){
 
       if (onValue == null || onValue.success==false) {
+        _resetState();
         Toast.show("Image Upload Failed!!!", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       } else {

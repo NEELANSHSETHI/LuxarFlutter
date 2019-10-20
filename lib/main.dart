@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_login_page_ui/api/api_services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Widgets/FormCard.dart';
 import 'click_pics.dart';
+import 'inputIPv4.dart';
 
 void main() => runApp(MaterialApp(
       home: MyApp(),
@@ -15,7 +17,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   bool isLogin = false;
 
   Widget radioButton(bool isSelected) => Container(
@@ -61,7 +62,10 @@ class _MyAppState extends State<MyApp> {
               Padding(
                 padding: EdgeInsets.only(top: 20.0),
                 child: Opacity(
-                    opacity: .3,child: Image.asset("assets/undraw1.png",)),
+                    opacity: .3,
+                    child: Image.asset(
+                      "assets/undraw1.png",
+                    )),
               ),
               Expanded(
                 child: Container(),
@@ -85,9 +89,14 @@ class _MyAppState extends State<MyApp> {
                       Text("EZ SHOP",
                           style: TextStyle(
                               fontFamily: "Poppins-Bold",
-                              foreground: Paint()..shader =LinearGradient(
-                                colors: <Color>[Color(0xFF17ead9), Color(0xFF6078ea)],
-                              ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                              foreground: Paint()
+                                ..shader = LinearGradient(
+                                  colors: <Color>[
+                                    Color(0xFF17ead9),
+                                    Color(0xFF6078ea)
+                                  ],
+                                ).createShader(
+                                    Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
                               fontSize: ScreenUtil.getInstance().setSp(76),
                               letterSpacing: .6,
                               fontWeight: FontWeight.bold))
@@ -96,7 +105,9 @@ class _MyAppState extends State<MyApp> {
                   SizedBox(
                     height: ScreenUtil.getInstance().setHeight(80),
                   ),
-                  FormCard(isLogin: isLogin,),
+                  FormCard(
+                    isLogin: isLogin,
+                  ),
                   SizedBox(height: ScreenUtil.getInstance().setHeight(40)),
                   InkWell(
                     child: Container(
@@ -116,20 +127,58 @@ class _MyAppState extends State<MyApp> {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
                             print(prefs.getString('name'));
                             print(prefs.getString('email'));
                             print(prefs.getString('phone'));
                             print(prefs.getString('password'));
+                            print(prefs.getString('ip'));
 
-                            if(!isLogin)
-                                Navigator.push(context,MaterialPageRoute(
-                                  builder: (BuildContext context) => ClickPictures()
-                                ));
-                            
+                            if (prefs.getString('ip') == null) {
+                              showDialog(
+                                context: context,
+                                builder: (_) => FunkyOverlay(),
+                              ).then((onValue) {
+                                setState(() {
+//                                  ipText = prefs.getString('ip') ?? "IP Not Found";
+                                });
+                              });
+                            } else {
+                              if (!isLogin) {
+                                signUpApi(
+                                        email: prefs.getString('email'),
+                                        name: prefs.getString('name'),
+                                        password: prefs.getString('password'),
+                                        phone:
+                                            int.parse(prefs.getString('phone')))
+                                    .then((onValue) {
+                                  if (onValue.success == true)
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (BuildContext context) =>
+                                                ClickPictures()));
+                                  else
+                                    print(onValue.message);
+                                });
+                              } else {
+                                loginApi(
+                                        email: prefs.getString('email'),
+                                        password: prefs.getString('password'))
+                                    .then((onValue) {
+                                  print(onValue.message);
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              ClickPictures()));
+                                });
+                              }
+                            }
                           },
                           child: Center(
-                            child: Text(!isLogin?"SIGNUP":"SIGNIN",
+                            child: Text(!isLogin ? "SIGNUP" : "SIGNIN",
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontFamily: "Poppins-Bold",
@@ -195,8 +244,8 @@ class _MyAppState extends State<MyApp> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(isLogin?
-                        "New User? ":"Already have an account?",
+                      Text(
+                        isLogin ? "New User? " : "Already have an account?",
                         style: TextStyle(fontFamily: "Poppins-Medium"),
                       ),
                       InkWell(
@@ -205,7 +254,7 @@ class _MyAppState extends State<MyApp> {
                             isLogin = !isLogin;
                           });
                         },
-                        child: Text(!isLogin?" Login":" SignUp",
+                        child: Text(!isLogin ? " Login" : " SignUp",
                             style: TextStyle(
                                 color: Color(0xFF5d74e3),
                                 fontFamily: "Poppins-Bold")),

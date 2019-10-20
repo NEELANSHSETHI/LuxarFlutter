@@ -18,12 +18,12 @@ class UploadImagesModel {
   });
 
   factory UploadImagesModel.fromJson(Map<String, dynamic> json) => UploadImagesModel(
-    success: json["success"],
-    message: json["message"],
+    success: json["success"] == null ? null : json["success"],
+    message: json["message"] == null ? null : json["message"],
   );
 
   Map<String, dynamic> toJson() => {
-    "success": success,
-    "message": message,
+    "success": success == null ? null : success,
+    "message": message == null ? null : message,
   };
 }

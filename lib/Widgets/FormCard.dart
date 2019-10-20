@@ -66,8 +66,10 @@ class _FormCardState extends State<FormCard> {
                   keyboardType: TextInputType.text,
                   autofocus: true,
                   textInputAction: TextInputAction.next,
-                  onSubmitted: (v) {
+                  onChanged: (v) {
                     addUserData('name', v.trim());
+                  },
+                  onSubmitted: (v){
                     FocusScope.of(context).nextFocus();
                   },
                   decoration: InputDecoration(
@@ -84,8 +86,10 @@ class _FormCardState extends State<FormCard> {
                 TextField(
                   autofocus: true,
                   textInputAction: TextInputAction.next,
-                  onSubmitted: (v) {
+                  onChanged: (v) {
                     addUserData('phone', v.trim());
+                  },
+                  onSubmitted: (v){
                     FocusScope.of(context).nextFocus();
                   },
                   keyboardType: TextInputType.phone,
@@ -106,8 +110,10 @@ class _FormCardState extends State<FormCard> {
               keyboardType: TextInputType.emailAddress,
               autofocus: true,
               textInputAction: TextInputAction.next,
-              onSubmitted: (v) {
+              onChanged: (v) {
                 addUserData('email', v.trim());
+              },
+              onSubmitted: (v){
                 FocusScope.of(context).nextFocus();
               },
               decoration: InputDecoration(
@@ -125,7 +131,7 @@ class _FormCardState extends State<FormCard> {
               autofocus: true,
               textInputAction: TextInputAction.done,
               obscureText: true,
-              onSubmitted: (v){
+              onChanged: (v){
                 addUserData('password', v);
               },
               decoration: InputDecoration(
