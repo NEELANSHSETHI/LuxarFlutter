@@ -333,11 +333,11 @@ class _ClickPicturesState extends State<ClickPictures> {
         lookupMimeType(image1.path, headerBytes: [0xFF, 0xD8]).split('/');
 
     print("imahepath ${image1.path}");
-    final file1 = await http.MultipartFile.fromPath('image1', image1.path,
+    final file1 = await http.MultipartFile.fromPath('front', image1.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    final file2 = await http.MultipartFile.fromPath('image2', image2.path,
+    final file2 = await http.MultipartFile.fromPath('left', image2.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    final file3 = await http.MultipartFile.fromPath('image3', image3.path,
+    final file3 = await http.MultipartFile.fromPath('right', image3.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     // Explicitly pass the extension of the image with request body
     // Since image_picker has some bugs due which it mixes up

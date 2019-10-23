@@ -87,15 +87,17 @@ Future<UploadImagesModel> uploadImagesApi(http.MultipartFile file1,
   String url = "$HOST_URL$endpoint";
 
   final imageUploadRequest = http.MultipartRequest('POST', Uri.parse(url));
-
+  Map<String, String> headers = { "auth": "$token"};
   imageUploadRequest.fields['ext'] = mimeTypeData[1];
+  imageUploadRequest.headers.addAll(headers);
   imageUploadRequest.files.add(file1);
-//  imageUploadRequest.files.add(file2);
-//  imageUploadRequest.files.add(file3);
+  imageUploadRequest.files.add(file2);
+  imageUploadRequest.files.add(file3);
 
   try {
     final streamedResponse = await imageUploadRequest.send();
     print(imageUploadRequest.fields[1]);
+
     final response = await http.Response.fromStream(streamedResponse);
     print(response.statusCode);
     if (response.statusCode != 200) {
