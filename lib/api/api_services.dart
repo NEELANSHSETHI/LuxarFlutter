@@ -18,7 +18,7 @@ SharedPreferences prefs;
 
 Future<String> preferences() async {
   prefs = await SharedPreferences.getInstance();
-  HOST_URL = 'http://192.168.31.54:5000/';
+  HOST_URL = 'http://${prefs.getString('ip')}:5000/';
   token = prefs.getString('token');
   return HOST_URL;
 }
