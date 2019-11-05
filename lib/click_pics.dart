@@ -32,11 +32,12 @@ class _ClickPicturesState extends State<ClickPictures> {
   bool _isUploading = false;
   SharedPreferences prefs;
   String ipText;
-
+  String uploadText;
 
   @override
   void initState() {
       super.initState();
+      uploadText = "Upload";
       preferences();
   }
 
@@ -146,7 +147,7 @@ class _ClickPicturesState extends State<ClickPictures> {
 
                   },
                   child: Center(
-                    child: Text("Upload",
+                    child: Text(uploadText,
                         style: TextStyle(
                             color: Colors.white,
                             fontFamily: "Poppins-Bold",
@@ -333,11 +334,11 @@ class _ClickPicturesState extends State<ClickPictures> {
         lookupMimeType(image1.path, headerBytes: [0xFF, 0xD8]).split('/');
 
     print("imahepath ${image1.path}");
-    final file1 = await http.MultipartFile.fromPath('front', image1.path,
+    final file1 = await http.MultipartFile.fromPath('front', image1.path,filename: "front.${mimeTypeData[1]}",
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    final file2 = await http.MultipartFile.fromPath('left', image2.path,
+    final file2 = await http.MultipartFile.fromPath('left', image2.path,filename: "left.${mimeTypeData[1]}",
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    final file3 = await http.MultipartFile.fromPath('right', image3.path,
+    final file3 = await http.MultipartFile.fromPath('right', image3.path,filename: "right.${mimeTypeData[1]}",
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     // Explicitly pass the extension of the image with request body
     // Since image_picker has some bugs due which it mixes up
@@ -351,6 +352,10 @@ class _ClickPicturesState extends State<ClickPictures> {
         Toast.show("Image Upload Failed!!!", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       } else {
+          setState(() {
+            _isUploading = false;
+            uploadText = "Uploaded";
+          });
         Toast.show("Image Uploaded Successfully!!!", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       }
@@ -388,9 +393,10 @@ class _ClickPicturesState extends State<ClickPictures> {
   void _resetState() {
     setState(() {
       _isUploading = false;
-//      file1 = null;
-//      file2 = null;
-//      file3 = null;
+      uploadText = "Upload";
+      file1 = null;
+      file2 = null;
+      file3 = null;
     });
   }
 }

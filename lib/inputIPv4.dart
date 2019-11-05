@@ -55,7 +55,7 @@ class FunkyOverlayState extends State<FunkyOverlay>
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Enter the IPv4 Address",
+                  Text("Enter the IPv4 Address",maxLines: 2,textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.black,
                           fontFamily: "Poppins-Bold",
