@@ -43,6 +43,7 @@ class _CartState extends State<Cart> {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();
                 Navigator.pop(context);
+                timer.cancel();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => MyApp()),
                     (Route<dynamic> route) => false);

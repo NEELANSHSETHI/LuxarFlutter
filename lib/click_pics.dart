@@ -72,7 +72,7 @@ class _ClickPicturesState extends State<ClickPictures> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Click Pictures"),),
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
         body: Container(
       height: double.infinity,
       width: double.infinity,
