@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_page_ui/api/api_services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 import 'Widgets/FormCard.dart';
+import 'cart_items.dart';
 import 'click_pics.dart';
 import 'inputIPv4.dart';
 
@@ -165,11 +167,18 @@ class _MyAppState extends State<MyApp> {
                                       password: prefs.getString('password'))
                                   .then((onValue) {
                                 print(onValue.message);
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            ClickPictures()));
+                                if(onValue.success==true){
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              Cart()));
+                                }
+                                else{
+                                  Toast.show(onValue.message, context,
+                                      duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+                                }
+
                               });
                             }
                           }

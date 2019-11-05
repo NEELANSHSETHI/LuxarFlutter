@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter_login_page_ui/models/cart_model.dart';
 import 'package:flutter_login_page_ui/models/login_model.dart';
 import 'package:flutter_login_page_ui/models/signup_model.dart';
+import 'package:flutter_login_page_ui/models/status_model.dart';
 import 'package:flutter_login_page_ui/models/upload_images.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
@@ -15,7 +16,7 @@ String token = '';
 String HOST_URL = '';
 SharedPreferences prefs;
 
-Future<String >preferences() async {
+Future<String> preferences() async {
   prefs = await SharedPreferences.getInstance();
   HOST_URL = 'http://192.168.31.54:5000/';
   token = prefs.getString('token');
@@ -24,40 +25,42 @@ Future<String >preferences() async {
 
 Future<LoginModel> loginApi({String email, String password}) async {
   String api;
- await preferences().then((onValue){
+  await preferences().then((onValue) {
     api = onValue;
   });
   String endpoint = 'api/auth/login';
   String url = "$api$endpoint";
   print(url);
-  final response = await http.post(url, headers: {
-    HttpHeaders.contentTypeHeader: 'application/json',
-  }, body: json.encode({
-    "email": '$email',
-    "password": '$password',
-  }));
+  final response = await http.post(url,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: json.encode({
+        "email": '$email',
+        "password": '$password',
+      }));
   print(response.statusCode.toString() + "login");
 
   var res = loginModelFromJson(response.body);
 
-  if(res.success==true) {
+  if (res.success == true) {
     prefs.setString('token', res.data.token);
   }
   return res;
-
 }
 
 Future<SignUpModel> signUpApi(
     {String email, String password, int phone, String name}) async {
   String api;
-  await preferences().then((onValue){
+  await preferences().then((onValue) {
     api = onValue;
   });
   String endpoint = 'api/auth/signup';
   String url = "$HOST_URL$endpoint";
   print(url);
 
-  Map body = {"email": "$email",
+  Map body = {
+    "email": "$email",
     "password": "$password",
     "name": "$name",
     "phone": phone
@@ -71,23 +74,26 @@ Future<SignUpModel> signUpApi(
   print(response.statusCode.toString() + "signUp");
   var res = signUpModelFromJson(response.body);
 
-  if(res.success==true) {
+  if (res.success == true) {
     prefs.setString('token', res.data.token);
   }
-    return res;
+  return res;
 }
 
-Future<UploadImagesModel> uploadImagesApi(http.MultipartFile file1,
-    http.MultipartFile file2, http.MultipartFile file3, var mimeTypeData) async {
+Future<UploadImagesModel> uploadImagesApi(
+    http.MultipartFile file1,
+    http.MultipartFile file2,
+    http.MultipartFile file3,
+    var mimeTypeData) async {
   String api;
-  await preferences().then((onValue){
+  await preferences().then((onValue) {
     api = onValue;
   });
   String endpoint = 'api/user/images';
   String url = "$HOST_URL$endpoint";
 
   final imageUploadRequest = http.MultipartRequest('POST', Uri.parse(url));
-  Map<String, String> headers = { "auth": "$token"};
+  Map<String, String> headers = {"auth": "$token"};
   imageUploadRequest.fields['ext'] = mimeTypeData[1];
   imageUploadRequest.headers.addAll(headers);
   imageUploadRequest.files.add(file1);
@@ -111,13 +117,14 @@ Future<UploadImagesModel> uploadImagesApi(http.MultipartFile file1,
   }
 }
 
-Future<CartModel> cartApi(int bookingId) async {
+Future<CartModel> cartApi() async {
   String api;
-  await preferences().then((onValue){
+  await preferences().then((onValue) {
     api = onValue;
   });
   String endpoint = 'api/user/cart';
   String url = "$HOST_URL$endpoint";
+  print(url);
   final response = await http.get(
     url,
     headers: {
@@ -126,10 +133,17 @@ Future<CartModel> cartApi(int bookingId) async {
     },
   );
   print(response.statusCode.toString() + "cartModel");
-  return cartModelFromJson(response.body);
+  if (response.statusCode != 200){
+    print(response.body);
+    return null;
+  }
+  else {
+    print(cartModelFromJson(response.body).toJson());
+    return cartModelFromJson(response.body);
+  }
 }
 
-Future<CartModel> statusApi(int bookingId) async {
+Future<StatusModel> statusApi() async {
   preferences();
   String endpoint = 'api/user/status';
   String url = "$HOST_URL$endpoint";
@@ -140,6 +154,13 @@ Future<CartModel> statusApi(int bookingId) async {
       'auth': '$token'
     },
   );
-  print(response.statusCode.toString() + "cartModel");
-  return cartModelFromJson(response.body);
+  print(response.statusCode.toString() + "statusApi");
+  if (response.statusCode != 200){
+    print(response.body);
+    return null;
+  }
+  else {
+    print(statusModelFromJson(response.body).toJson());
+    return statusModelFromJson(response.body);
+  }
 }

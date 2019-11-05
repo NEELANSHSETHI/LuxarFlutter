@@ -11,6 +11,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
+import 'cart_items.dart';
 import 'inputIPv4.dart';
 import 'api/api_services.dart';
 
@@ -70,6 +71,7 @@ class _ClickPicturesState extends State<ClickPictures> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Click Pictures"),),
       resizeToAvoidBottomPadding: false,
         body: Container(
       height: double.infinity,
@@ -352,12 +354,15 @@ class _ClickPicturesState extends State<ClickPictures> {
         Toast.show("Image Upload Failed!!!", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       } else {
-          setState(() {
-            _isUploading = false;
-            uploadText = "Uploaded";
-          });
+          _resetState();
         Toast.show("Image Uploaded Successfully!!!", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      Cart()));
       }
     });
 
