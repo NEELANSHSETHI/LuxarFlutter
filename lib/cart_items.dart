@@ -94,9 +94,9 @@ class _CartState extends State<Cart> {
                                   snapshot.data.data.cart[index].image),
                               dense: true,
                               subtitle:
-                                  Text("ID: ${snapshot.data.data.cart[0].id}"),
+                                  Text("ID: ${snapshot.data.data.cart[index].id}"),
                               title: Text(
-                                  "Name: ${snapshot.data.data.cart[0].name}\nQuantity: ${snapshot.data.data.cart[0].quantity}${ctr++}"),
+                                  "Name: ${snapshot.data.data.cart[index].name}\nQuantity: ${snapshot.data.data.cart[index].quantity}"),
                             ),
                           ),
                         );
@@ -121,11 +121,16 @@ class _CartState extends State<Cart> {
 
   checkStatus() {
     statusApi().then((onValue) {
-      if (onValue != null && onValue.success == true) if (onValue.data.status ==
+      if (onValue != null && onValue.success == true)
+        if (onValue.data.status ==
           'ONLINE')
         setState(() {
           isOnline = true;
         });
+        if(onValue.data.status == 'OFFLINE')
+          setState(() {
+            isOnline =  false;
+          });
     });
   }
 }
