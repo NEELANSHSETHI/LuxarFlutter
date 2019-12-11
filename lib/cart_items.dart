@@ -36,24 +36,30 @@ class _CartState extends State<Cart> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ), child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CircleAvatar(
-                    child: Icon(Icons.person),radius: 30,backgroundColor: Colors.white,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      CircleAvatar(
+                        child: Icon(Icons.person),
+                        radius: 30,
+                        backgroundColor: Colors.white,
+                      ),
+                      Text(
+                        '${prefs.getString('name')}',
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      Text(
+                        '${prefs.getString('email')}',
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
+                    ],
                   ),
-                  Text(
-                    '${prefs.getString('name')}',style: TextStyle(color: Colors.white,fontSize: 20),
-                  ),Text(
-                    '${prefs.getString('email')}',style: TextStyle(color: Colors.white,fontSize: 20),
-                  ),
-                ],
-            ),
-              )
-            ),
+                )),
             ListTile(
               leading: Icon(Icons.settings_power),
               title: Text("Logout"),
@@ -141,24 +147,33 @@ class _CartState extends State<Cart> {
                               "Thanks for Shopping!",
                               style: TextStyle(fontSize: 25),
                             ),
-                            SizedBox(height: 20,),
+                            SizedBox(
+                              height: 20,
+                            ),
                             RaisedButton(
                               onPressed: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           Receipt(t))),
-                              child: Row(mainAxisSize: MainAxisSize.min,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  Icon(Icons.receipt,color: Colors.white,),
+                                  Icon(
+                                    Icons.receipt,
+                                    color: Colors.white,
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text('View Receipt',style: TextStyle(color: Colors.white),),
+                                    child: Text(
+                                      'View Receipt',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ],
                               ),
                               shape: RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(18.0),
+                                borderRadius: new BorderRadius.circular(18.0),
 //                                  side: BorderSide(color: Colors.red)
                               ),
                               color: Colors.lightBlueAccent,

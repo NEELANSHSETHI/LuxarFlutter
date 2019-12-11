@@ -14,8 +14,8 @@ class Receipt extends StatefulWidget {
 }
 
 class _ReceiptState extends State<Receipt> {
-
   int _price;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,6 @@ class _ReceiptState extends State<Receipt> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-//              color: Colors.blue,
               height: MediaQuery.of(context).size.height * 0.65,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -50,14 +49,14 @@ class _ReceiptState extends State<Receipt> {
             Container(
               height: 100,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),color: Colors.lightBlueAccent
-              ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                  color: Colors.lightBlueAccent),
               width: MediaQuery.of(context).size.width,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   'Total = ₹${getTotal()}',
-                  style: TextStyle(fontSize: 22,color: Colors.white),
+                  style: TextStyle(fontSize: 22, color: Colors.white),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -97,10 +96,10 @@ class _ReceiptState extends State<Receipt> {
     );
   }
 
-  int getTotal(){
-    _price=0;
-    for (Cart c in widget.t){
-      _price += c.price*c.quantity;
+  int getTotal() {
+    _price = 0;
+    for (Cart c in widget.t) {
+      _price += c.price * c.quantity;
     }
     return _price;
   }
