@@ -18,13 +18,13 @@ class CartModel {
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) => CartModel(
-    success: json["success"] == null ? null : json["success"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    success: json["success"],
+    data: Data.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "success": success == null ? null : success,
-    "data": data == null ? null : data.toJson(),
+    "success": success,
+    "data": data.toJson(),
   };
 }
 
@@ -36,11 +36,11 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    cart: json["cart"] == null ? null : List<Cart>.from(json["cart"].map((x) => Cart.fromJson(x))),
+    cart: List<Cart>.from(json["cart"].map((x) => Cart.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "cart": cart == null ? null : List<dynamic>.from(cart.map((x) => x.toJson())),
+    "cart": List<dynamic>.from(cart.map((x) => x.toJson())),
   };
 }
 
@@ -49,25 +49,29 @@ class Cart {
   String name;
   String image;
   int quantity;
+  int price;
 
   Cart({
     this.id,
     this.name,
     this.image,
     this.quantity,
+    this.price,
   });
 
   factory Cart.fromJson(Map<String, dynamic> json) => Cart(
-    id: json["id"] == null ? null : json["id"],
-    name: json["name"] == null ? null : json["name"],
-    image: json["image"] == null ? null : json["image"],
-    quantity: json["quantity"] == null ? null : json["quantity"],
+    id: json["id"],
+    name: json["name"],
+    image: json["image"],
+    quantity: json["quantity"],
+    price: json["price"],
   );
 
   Map<String, dynamic> toJson() => {
-    "id": id == null ? null : id,
-    "name": name == null ? null : name,
-    "image": image == null ? null : image,
-    "quantity": quantity == null ? null : quantity,
+    "id": id,
+    "name": name,
+    "image": image,
+    "quantity": quantity,
+    "price": price,
   };
 }

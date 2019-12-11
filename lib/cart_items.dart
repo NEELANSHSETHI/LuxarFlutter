@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login_page_ui/api/api_services.dart';
 import 'package:flutter_login_page_ui/main.dart';
+import 'package:flutter_login_page_ui/receipt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Cart extends StatefulWidget {
@@ -14,6 +16,7 @@ class _CartState extends State<Cart> {
   Timer timer;
   int ctr;
   bool isOnline;
+  List t;
 
   @override
   void initState() {
@@ -72,7 +75,7 @@ class _CartState extends State<Cart> {
                 future: cartApi(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) if (snapshot.data.success == true) {
-                    List t = snapshot.data.data.cart;
+                    t = snapshot.data.data.cart;
                     if (t.length == 0)
                       return Image.asset(
                         'assets/cart_is_empty.png',
@@ -93,10 +96,10 @@ class _CartState extends State<Cart> {
                               leading: Image.network(
                                   snapshot.data.data.cart[index].image),
                               dense: true,
-                              subtitle:
-                                  Text("ID: ${snapshot.data.data.cart[index].id}"),
+                              subtitle: Text(
+                                  "ID: ${snapshot.data.data.cart[index].id}"),
                               title: Text(
-                                  "Name: ${snapshot.data.data.cart[index].name}\nQuantity: ${snapshot.data.data.cart[index].quantity}"),
+                                  "Name: ${snapshot.data.data.cart[index].name}\nQuantity: ${snapshot.data.data.cart[index].quantity}\nPrice: ${snapshot.data.data.cart[index].price}"),
                             ),
                           ),
                         );
@@ -109,11 +112,45 @@ class _CartState extends State<Cart> {
                 },
               )
             : Container(
-                child: Center(
-                    child: Text(
-                  "Go Online!!",
-                  style: TextStyle(fontSize: 25),
-                )),
+                child: t.isEmpty
+                    ? Center(
+                        child: Text(
+                        "Go Online!!",
+                        style: TextStyle(fontSize: 25),
+                      ))
+                    : Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              "Thanks for Shopping!",
+                              style: TextStyle(fontSize: 25),
+                            ),
+                            SizedBox(height: 20,),
+                            RaisedButton(
+                              onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          Receipt(t))),
+                              child: Row(mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Icon(Icons.receipt,color: Colors.white,),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('View Receipt',style: TextStyle(color: Colors.white),),
+                                  ),
+                                ],
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(18.0),
+//                                  side: BorderSide(color: Colors.red)
+                              ),
+                              color: Colors.lightBlueAccent,
+                            )
+                          ],
+                        ),
+                      ),
               ),
       ),
     );
@@ -121,16 +158,15 @@ class _CartState extends State<Cart> {
 
   checkStatus() {
     statusApi().then((onValue) {
-      if (onValue != null && onValue.success == true)
-        if (onValue.data.status ==
+      if (onValue != null && onValue.success == true) if (onValue.data.status ==
           'ONLINE')
         setState(() {
           isOnline = true;
         });
-        if(onValue.data.status == 'OFFLINE')
-          setState(() {
-            isOnline =  false;
-          });
+      if (onValue.data.status == 'OFFLINE')
+        setState(() {
+          isOnline = false;
+        });
     });
   }
 }
