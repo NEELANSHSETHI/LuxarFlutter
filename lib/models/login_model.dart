@@ -20,30 +20,34 @@ class LoginModel {
   });
 
   factory LoginModel.fromJson(Map<String, dynamic> json) => LoginModel(
-    success: json["success"] == null ? null : json["success"],
-    message: json["message"] == null ? null : json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    success: json["success"],
+    message: json["message"],
+    data: Data.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "success": success == null ? null : success,
-    "message": message == null ? null : message,
-    "data": data == null ? null : data.toJson(),
+    "success": success,
+    "message": message,
+    "data": data.toJson(),
   };
 }
 
 class Data {
   String token;
+  String name;
 
   Data({
     this.token,
+    this.name,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    token: json["token"] == null ? null : json["token"],
+    token: json["token"],
+    name: json["name"],
   );
 
   Map<String, dynamic> toJson() => {
-    "token": token == null ? null : token,
+    "token": token,
+    "name": name,
   };
 }

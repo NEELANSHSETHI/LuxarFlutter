@@ -45,6 +45,7 @@ Future<LoginModel> loginApi({String email, String password}) async {
 
   if (res.success == true) {
     prefs.setString('token', res.data.token);
+    prefs.setString('name', res.data.name);
   }
   return res;
 }

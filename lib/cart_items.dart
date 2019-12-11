@@ -42,6 +42,7 @@ class _CartState extends State<Cart> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       CircleAvatar(
@@ -77,7 +78,7 @@ class _CartState extends State<Cart> {
         ),
       ),
       appBar: AppBar(
-          leading: Icon(Icons.shopping_cart),
+          leading: Builder(builder: (context) => IconButton(icon: Icon(Icons.shopping_cart),onPressed: () => Scaffold.of(context).openDrawer(),)),
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
