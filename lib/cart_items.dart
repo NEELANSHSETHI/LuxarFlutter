@@ -24,6 +24,7 @@ class _CartState extends State<Cart> {
     isOnline = false;
     timer = Timer.periodic(Duration(seconds: 5), (Timer t) => checkStatus());
     ctr = 0;
+    t = new List();
   }
 
   @override
@@ -37,7 +38,21 @@ class _CartState extends State<Cart> {
             DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
-              ),
+              ), child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  CircleAvatar(
+                    child: Icon(Icons.person),radius: 30,backgroundColor: Colors.white,
+                  ),
+                  Text(
+                    '${prefs.getString('name')}',style: TextStyle(color: Colors.white,fontSize: 20),
+                  ),Text(
+                    '${prefs.getString('email')}',style: TextStyle(color: Colors.white,fontSize: 20),
+                  ),
+                ],
+            ),
+              )
             ),
             ListTile(
               leading: Icon(Icons.settings_power),
